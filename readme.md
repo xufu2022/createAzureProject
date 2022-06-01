@@ -16,9 +16,13 @@ terraform apply  -auto-approve
 terraform destroy -auto-approve
 
 # Delete Files
-rm  .terraform*
+rm  .terraform* -recurse -force
 rm  terraform.tfstate*
 
 
 # Enviroment
 terraform plan -var-file="dev.tfvars"
+
+# QA
+
+global password set to secret and not editable

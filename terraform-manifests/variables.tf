@@ -22,3 +22,47 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+variable "hostname" {
+  type    = string
+  default = "example"
+}
+
+variable "apppoolusername" {
+  type    = string
+  default = "username"
+}
+
+variable "apppoolpassword" {
+  type    = string
+  default = "Password"
+}
+
+variable "BuildConfiguration" {
+  type    = string
+  default = "release"
+}
+
+variable "BuildPlatform" {
+  type    = string
+  default = "any cpu"
+}
+
+variable "ASP_DeleteLogs" {
+  type    = string
+  default = "\\\\svr-prdfs\\DeploymentScript\\ASP_DeleteLogs.ps1"
+}
+
+variable "Delete_UnusedWebConfigs" {
+  type    = string
+  default = "\\\\svr-prdfs\\DeploymentScript\\Delete_UnusedWebConfigs.ps1"
+}
+
+variable "IIS_Settings" {
+  type    = string
+  default = "\\\\svr-prdfs\\DeploymentScript\\IIS_Settings.ps1"
+}
+variable "IIS_WebConfig" {
+  type    = string
+  default = "\\\\svr-prdfs\\DeploymentScript\\IIS_WebConfig.ps1"
+}

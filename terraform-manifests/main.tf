@@ -2,11 +2,11 @@
 
 ## Create team project for the commercial team
 resource "azuredevops_project" "terrproj" {
-  name               = "${var.project_name}"
+  name               = var.project_name
   description        = "Repository test by myself"
   visibility         = "private"
   version_control    = "Git"
-  work_item_template = "${var.work_item_template}"
+  work_item_template = var.work_item_template
 
   features = {
     "boards"       = "enabled"
@@ -41,6 +41,46 @@ resource "azuredevops_variable_group" "Global" {
   allow_access = true
 
   variable {
+    name  = "Apppool.Password"
+    value = local.Global.ApppoolPassword
+  }
+  variable {
+    name  = "Apppool.Username"
+    value = local.Global.ApppoolUsername
+  }
+  variable {
+    name  = "BuildConfiguration"
+    value = local.Global.BuildConfiguration
+  }
+  variable {
+    name  = "BuildPlatform"
+    value = local.Global.BuildPlatform
+  }
+  variable {
+    name  = "Deployment.Path"
+    value = local.Global.DeploymentPath
+  }
+  variable {
+    name  = "DS.ASP_DeleteLogs.Path"
+    value = local.Global.DeleteLogs
+  }
+  variable {
+    name  = "DS.Delete_UnusedWebConfigs.Path"
+    value = local.Global.UnusedWebConfigs
+  }
+  variable {
+    name  = "DS.IIS_WebConfig.Path"
+    value = local.Global.IIS_WebConfig
+  }
+  variable {
+    name  = "Log.Enabled"
+    value = local.Global.Log_Enabled
+  }
+  variable {
+    name  = "Log.Path"
+    value = local.Global.Log_Path
+  }
+  variable {
     name  = "DS.IIS_Settings.Path"
     value = "\\\\svr-prdfs\\DeploymentScript\\IIS_Settings.ps1"
   }
@@ -57,9 +97,27 @@ resource "azuredevops_variable_group" "TestEnvironmentDetails" {
   }
   variable {
     name  = "Hostname"
-    value = "Test"
+    value = "${var.hostname}-test.incommunities.co.uk"
   }
+
+  dynamic "variable"{
+    for_each   = { for idx, ipaddress in local.Testing.Web.BindingIpAddress: ipaddress => idx}
+    content{
+         name  = "Machine.Name0${variable.value + 1}"
+         value = "${local.Testing.Web.Server}0${variable.value + 1}"
+    }
+  }
+
+  dynamic "variable"{
+    for_each   = { for idx, ipaddress in local.Testing.Web.BindingIpAddress: ipaddress => idx}
+    content{
+        name  = "${local.Testing.Web.Alias}0${variable.value + 1}.BindingIpAddress"
+        value = "${local.Testing.Web.BindingIpAddress[variable.value]}"
+    }
+  }
+
 }
+
 resource "azuredevops_variable_group" "StagingEnvironmentDetails" {
   project_id   = azuredevops_project.terrproj.id
   name         = "Staging Environment Details variable group"
@@ -73,7 +131,23 @@ resource "azuredevops_variable_group" "StagingEnvironmentDetails" {
 
   variable {
     name  = "Hostname"
-    value = "Staging"
+    value = "${var.hostname}-stage.incommunities.co.uk"
+  }
+
+  dynamic "variable"{
+    for_each   = { for idx, ipaddress in local.Staging.Web.BindingIpAddress: ipaddress => idx}
+    content{
+         name  = "Machine.Name0${variable.value + 1}"
+         value = "${local.Staging.Web.Server}0${variable.value + 1}"
+    }
+  }
+
+  dynamic "variable"{
+    for_each   = { for idx, ipaddress in local.Staging.Web.BindingIpAddress: ipaddress => idx}
+    content{
+        name  = "${local.Staging.Web.Alias}0${variable.value + 1}.BindingIpAddress"
+        value = "${local.Staging.Web.BindingIpAddress[variable.value]}"
+    }
   }
 }
 resource "azuredevops_variable_group" "ProductionEnvironmentDetails" {
@@ -88,6 +162,22 @@ resource "azuredevops_variable_group" "ProductionEnvironmentDetails" {
   }
   variable {
     name  = "Hostname"
-    value = "Production"
+    value = "${var.hostname}.incommunities.co.uk"
+  }
+
+  dynamic "variable"{
+    for_each   = { for idx, ipaddress in local.Production.Web.BindingIpAddress: ipaddress => idx}
+    content{
+         name  = "Machine.Name0${variable.value + 1}"
+         value = "${local.Production.Web.Server}0${variable.value + 1}"
+    }
+  }
+
+  dynamic "variable"{
+    for_each   = { for idx, ipaddress in local.Production.Web.BindingIpAddress: ipaddress => idx}
+    content{
+        name  = "${local.Production.Web.Alias}0${variable.value + 1}.BindingIpAddress"
+        value = "${local.Production.Web.BindingIpAddress[variable.value]}"
+    }
   }
 }
